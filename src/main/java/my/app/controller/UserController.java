@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import my.app.service.UserService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping(path = "api/users")
@@ -26,21 +27,28 @@ public class UserController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
+    @GetMapping(params = "page")
+    public ResponseEntity<List<User>> getUsersPage(@RequestParam("page") int page) {
+        List<User> users = userService.getUsersPage(page);
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
     @GetMapping("{id}")
     public ResponseEntity<User> getUserById(@PathVariable long id) {
-        User user = userService.getUserById(id);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        Optional<User> maybeUser = userService.getUserById(id);
+        return maybeUser
+                .map(user -> new ResponseEntity<>(user, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping
-    public ResponseEntity<User> addUser(User user) {
-        System.out.println(user.toString());
+    public ResponseEntity<User> addUser(@RequestBody User user) {
         User newUser = userService.addUser(user);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Void> updateUser(@PathVariable long id, User user) {
+    public ResponseEntity<Void> updateUser(@PathVariable long id, @RequestBody User user) {
         user.setId(id);
         userService.updateUser(user);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
