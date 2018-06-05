@@ -12,7 +12,8 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService{
-    private final static int PAGE_SIZE = 5;
+    private final static int DEFAULT_PAGE_SIZE = 5;
+
     private final UserRepository userRepository;
 
     @Autowired
@@ -29,8 +30,13 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public List<User> getUsersPage(int page) {
+        return getUsersPage(page, DEFAULT_PAGE_SIZE);
+    }
+
+    @Override
+    public List<User> getUsersPage(int page, int size) {
         List<User> list = new ArrayList<>();
-        userRepository.findAll(PageRequest.of(page, PAGE_SIZE)).forEach(list::add);
+        userRepository.findAll(PageRequest.of(page, size)).forEach(list::add);
         return list;
     }
 

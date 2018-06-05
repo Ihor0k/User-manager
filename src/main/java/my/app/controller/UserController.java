@@ -23,16 +23,23 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
-        HttpHeaders headers = makeCountHeader();
-        return new ResponseEntity<>(users, headers, HttpStatus.OK);
-    }
-
-    @GetMapping(params = "page")
-    public ResponseEntity<List<User>> getUsersPage(@RequestParam("page") int page) {
-        List<User> users = userService.getUsersPage(page);
-        HttpHeaders headers = makeCountHeader();
+    public ResponseEntity<List<User>> getUsers(
+            @RequestParam("page") Optional<Integer> page,
+            @RequestParam(name = "size") Optional<Integer> size
+    ) {
+        List<User> users;
+        if (page.isPresent()) {
+            if (size.isPresent()) {
+                users = userService.getUsersPage(page.get(), size.get());
+            } else {
+                users = userService.getUsersPage(page.get());
+            }
+        } else {
+            users = userService.getAllUsers();
+        }
+        long count = userService.count();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Count", Long.toString(count));
         return new ResponseEntity<>(users, headers, HttpStatus.OK);
     }
 
@@ -66,12 +73,5 @@ public class UserController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-    }
-
-    private HttpHeaders makeCountHeader() {
-        long count = userService.count();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Total-Count", Long.toString(count));
-        return headers;
     }
 }
