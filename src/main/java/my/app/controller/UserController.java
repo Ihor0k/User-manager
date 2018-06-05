@@ -2,6 +2,7 @@ package my.app.controller;
 
 import my.app.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -24,13 +25,15 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
-        return new ResponseEntity<>(users, HttpStatus.OK);
+        HttpHeaders headers = makeCountHeader();
+        return new ResponseEntity<>(users, headers, HttpStatus.OK);
     }
 
     @GetMapping(params = "page")
     public ResponseEntity<List<User>> getUsersPage(@RequestParam("page") int page) {
         List<User> users = userService.getUsersPage(page);
-        return new ResponseEntity<>(users, HttpStatus.OK);
+        HttpHeaders headers = makeCountHeader();
+        return new ResponseEntity<>(users, headers, HttpStatus.OK);
     }
 
     @GetMapping("{id}")
@@ -63,5 +66,12 @@ public class UserController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    private HttpHeaders makeCountHeader() {
+        long count = userService.count();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Count", Long.toString(count));
+        return headers;
     }
 }

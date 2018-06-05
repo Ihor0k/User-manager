@@ -12,4 +12,5 @@ public interface UserService  {
     User addUser(User user);
     void updateUser(User user);
     void deleteUser(User user);
+    long count();
 }
