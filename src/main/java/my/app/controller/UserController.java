@@ -12,6 +12,7 @@ import my.app.service.UserService;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin
 @Controller
 @RequestMapping(path = "api/users")
 public class UserController {
