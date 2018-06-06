@@ -1,8 +1,10 @@
 package my.app.service;
 
 import my.app.model.User;
+import my.app.model.UserSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import my.app.repository.UserRepository;
 
@@ -22,21 +24,21 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public List<User> getAllUsers() {
-        List<User> list = new ArrayList<>();
-        userRepository.findAll().forEach(list::add);
-        return list;
+    public List<User> getAllUsers(User template) {
+        Specification<User> specification = new UserSpecification(template);
+        return userRepository.findAll(specification);
     }
 
     @Override
-    public List<User> getUsersPage(int page) {
-        return getUsersPage(page, DEFAULT_PAGE_SIZE);
+    public List<User> getUsersPage(int page, User template) {
+        return getUsersPage(page, DEFAULT_PAGE_SIZE, template);
     }
 
     @Override
-    public List<User> getUsersPage(int page, int size) {
+    public List<User> getUsersPage(int page, int size, User template) {
+        Specification<User> specification = new UserSpecification(template);
         List<User> list = new ArrayList<>();
-        userRepository.findAll(PageRequest.of(page, size)).forEach(list::add);
+        userRepository.findAll(specification, PageRequest.of(page, size)).forEach(list::add);
         return list;
     }
 

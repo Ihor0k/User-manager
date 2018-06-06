@@ -25,17 +25,18 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<User>> getUsers(
             @RequestParam("page") Optional<Integer> page,
-            @RequestParam(name = "size") Optional<Integer> size
+            @RequestParam("size") Optional<Integer> size,
+            User user
     ) {
         List<User> users;
         if (page.isPresent()) {
             if (size.isPresent()) {
-                users = userService.getUsersPage(page.get(), size.get());
+                users = userService.getUsersPage(page.get(), size.get(), user);
             } else {
-                users = userService.getUsersPage(page.get());
+                users = userService.getUsersPage(page.get(), user);
             }
         } else {
-            users = userService.getAllUsers();
+            users = userService.getAllUsers(user);
         }
         long count = userService.count();
         HttpHeaders headers = new HttpHeaders();

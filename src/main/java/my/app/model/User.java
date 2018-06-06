@@ -1,5 +1,6 @@
 package my.app.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -7,12 +8,13 @@ import java.io.Serializable;
 
 @Data
 @Entity
+@AllArgsConstructor
 @Table(name = "users")
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
-    private long id;
+    private Long id;
 
     @Column(name = "first_name", nullable = false)
     private String firstName;
@@ -24,5 +26,5 @@ public class User implements Serializable {
     private String email;
 
     @Column(name = "age")
-    private int age;
+    private Integer age;
 }
