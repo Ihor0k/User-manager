@@ -1,1 +1,1 @@
-Demo application with Spring and Angular
+Demo application with Spring and Hibernate
